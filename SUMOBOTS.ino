@@ -13,6 +13,10 @@ int LEFT_R = 17; // Pin to move motor backwards (IN4)
 const int irPin = 4;
 const int ledPin = 13;
 
+
+unsigned long duration = 50;
+float dist = 700;
+
 void setup() {
   // Setting up the serial monitor
   Serial.begin (9600);
@@ -35,13 +39,26 @@ void loop() {
   checkColorSensor();
   
   // Check ultrasonic sensor for distance measurement
-  //checkUltrasonicSensor();
-  
-  driveForward();
-  
+  checkUltrasonicSensor();
+
+  duration = measureDistance();
+  dist = calculateDistanceCm(duration);
+
+  if (digitalRead(irPin) == LOW && dist < 100) {
+    // RAM!!!!!
+    driveForward();
+  } else if (digitalRead(irPin) == LOW && dist >= 100) { 
+    // Search
+
+  } else {
+    // Get away from the edge
+    digitalWrite(RIGHT_R, LOW);
+    digitalWrite(LEFT_R, LOW);
+  }
   // Small delay to prevent overwhelming the serial monitor
   delay(250);
 }
+
 
 void checkColorSensor() {
   int state = digitalRead(irPin);
@@ -77,4 +94,26 @@ void driveBackward() {
   // Setting the speeds using enA and enB
   analogWrite(RIGHT_SPEED, 200);
   analogWrite(LEFT_SPEED, 200);
+}
+
+void turnLeft() {
+  Serial.println ("Turn Left");
+  digitalWrite(RIGHT_F, LOW);
+  digitalWrite(RIGHT_R, HIGH);
+  digitalWrite(LEFT_F, HIGH);
+  digitalWrite(LEFT_R, LOW);
+  // Setting the speeds using enA and enB
+  analogWrite(RIGHT_SPEED, 20);
+  analogWrite(LEFT_SPEED, 20);
+}
+
+void turnRight() {
+  Serial.println ("Turn Right");
+  digitalWrite(RIGHT_F, HIGH);
+  digitalWrite(RIGHT_R, LOW);
+  digitalWrite(LEFT_F, LOW);
+  digitalWrite(LEFT_R, HIGH);
+  // Setting the speeds using enA and enB
+  analogWrite(RIGHT_SPEED, 20);
+  analogWrite(LEFT_SPEED, 20);
 }
