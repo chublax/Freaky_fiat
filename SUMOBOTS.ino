@@ -44,19 +44,23 @@ void loop() {
   duration = measureDistance();
   dist = calculateDistanceCm(duration);
 
-  if (digitalRead(irPin) == LOW && dist < 100) {
+  if (digitalRead(irPin) == HIGH) { 
+    // Get away from the edge
+    driveBackward();
+    delay(50);
+    turnRight();
+    delay(50);
+    driveForward();
+    delay(50);
+  } else if (digitalRead(irPin) == LOW && dist < 100) {
     // RAM!!!!!
     driveForward();
-  } else if (digitalRead(irPin) == LOW && dist >= 100) { 
-    // Search
-
   } else {
-    // Get away from the edge
-    digitalWrite(RIGHT_R, LOW);
-    digitalWrite(LEFT_R, LOW);
+    // Search
+    turnRight();
   }
   // Small delay to prevent overwhelming the serial monitor
-  delay(250);
+  delay(50);
 }
 
 
@@ -96,6 +100,17 @@ void driveBackward() {
   analogWrite(LEFT_SPEED, 200);
 }
 
+void stop() {
+  Serial.println ("Stop driving");
+  digitalWrite(RIGHT_F, LOW);
+  digitalWrite(RIGHT_R, LOW);
+  digitalWrite(LEFT_F, LOW);
+  digitalWrite(LEFT_R, LOW);
+  // Setting the speeds using enA and enB
+  analogWrite(RIGHT_SPEED, 0);
+  analogWrite(LEFT_SPEED, 0);
+}
+
 void turnLeft() {
   Serial.println ("Turn Left");
   digitalWrite(RIGHT_F, LOW);
@@ -114,6 +129,6 @@ void turnRight() {
   digitalWrite(LEFT_F, LOW);
   digitalWrite(LEFT_R, HIGH);
   // Setting the speeds using enA and enB
-  analogWrite(RIGHT_SPEED, 20);
-  analogWrite(LEFT_SPEED, 20);
+  analogWrite(RIGHT_SPEED, 30);
+  analogWrite(LEFT_SPEED, 30);
 }
