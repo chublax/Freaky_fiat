@@ -19,6 +19,7 @@ float dist = 700;
 
 void setup() {
   // Setting up the serial monitor
+  delay(3000);
   Serial.begin (9600);
   Serial.println("Setting pins for motors");
   // Setup all the motor control pins to outputs
@@ -34,9 +35,16 @@ void setup() {
   setupUltrasonic();
 }
 
+int whiteCount = 0;
+
 void loop() {
   // Check IR sensor and display color detection
   checkColorSensor();
+  if (digitalRead(irPin) == HIGH) {
+    whiteCount++;
+  } else {
+    whiteCount = 0;
+  }
   
   // Check ultrasonic sensor for distance measurement
   checkUltrasonicSensor();
@@ -44,15 +52,7 @@ void loop() {
   duration = measureDistance();
   dist = calculateDistanceCm(duration);
 
-  if (digitalRead(irPin) == HIGH) { 
-    // Get away from the edge
-    driveBackward();
-    delay(50);
-    turnRight();
-    delay(50);
-    driveForward();
-    delay(50);
-  } else if (digitalRead(irPin) == LOW && dist < 100) {
+  if (dist < 400) {
     // RAM!!!!!
     driveForward();
   } else {
@@ -129,6 +129,6 @@ void turnRight() {
   digitalWrite(LEFT_F, LOW);
   digitalWrite(LEFT_R, HIGH);
   // Setting the speeds using enA and enB
-  analogWrite(RIGHT_SPEED, 30);
-  analogWrite(LEFT_SPEED, 30);
+  analogWrite(RIGHT_SPEED, 170);
+  analogWrite(LEFT_SPEED, 170);
 }
