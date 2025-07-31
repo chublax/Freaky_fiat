@@ -19,7 +19,7 @@ float dist = 700;
 
 void setup() {
   // Setting up the serial monitor
-  delay(3000);
+  delay(5000);
   Serial.begin (9600);
   Serial.println("Setting pins for motors");
   // Setup all the motor control pins to outputs
@@ -45,14 +45,14 @@ void loop() {
   } else {
     whiteCount = 0;
   }
-  
-  // Check ultrasonic sensor for distance measurement
-  checkUltrasonicSensor();
 
   duration = measureDistance();
   dist = calculateDistanceCm(duration);
 
-  if (dist < 400) {
+  if (whiteCount > 5) {
+    driveBackward();
+    delay(500);
+  } else if (dist < 400) {
     // RAM!!!!!
     driveForward();
   } else {
@@ -85,8 +85,8 @@ void driveForward() {
   digitalWrite(LEFT_F, LOW);
   digitalWrite(LEFT_R, HIGH);
   // Setting the speeds using enA and enB
-  analogWrite(RIGHT_SPEED, 200);
-  analogWrite(LEFT_SPEED, 200);
+  analogWrite(RIGHT_SPEED, 255);
+  analogWrite(LEFT_SPEED, 255);
 }
 
 void driveBackward() {
